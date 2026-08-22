@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stroke Risk Analyzer - Clinical Support & Stroke Risk Analyzer</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+        </svg>
+      </div>
+      <div class="logo-text">
+        <h2>Stroke <span>Analyzer</span></h2>
+        <p>Clinical Decision Suite</p>
+      </div>
+    </div>
+
+    <nav class="sidebar-menu">
+      <button class="menu-item active" data-target="dashboard-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+        </svg>
+        <span>Dashboard</span>
+      </button>
+
+      <button class="menu-item" data-target="analyzer-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 10.457L11.25 12.75 15 7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Stroke Analyzer</span>
+      </button>
+
+      <button class="menu-item" data-target="chat-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+        </svg>
+        <span>AI Assistant</span>
+      </button>
+
+      <button class="menu-item" data-target="settings-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.43l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0Z" />
+        </svg>
+        <span>Settings</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="status-indicator">
+        <span class="pulse-dot grey" id="global-device-status-dot"></span>
+        <span id="global-device-status-text">ESP32 Offline</span>
+      </div>
+      <p class="app-version">v1.1.0-beta</p>
+    </div>
+  </aside>
+
+  <!-- Main Container -->
+  <main class="main-content">
+
+    <!-- DASHBOARD VIEW -->
+    <section id="dashboard-tab" class="tab-content active">
+      <header class="content-header">
+        <div>
+          <h1>Clinic Dashboard</h1>
+          <p>Real-time analytics and device monitoring status.</p>
+        </div>
+        <div class="header-date" id="current-date">July 18, 2026</div>
+      </header>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon teal">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.05 4.575a1.575 1.575 0 10-3.15 0v3m3.15-3v-1.5a1.575 1.575 0 013.15 0v1.5m-3.15 0l.075 5.925m3.075.75V4.575m0 0a1.575 1.575 0 013.15 0V15M6.9 7.575a1.575 1.575 0 10-3.15 0v8.175a6.75 6.75 0 006.75 6.75h2.018a5.25 5.25 0 003.712-1.538l1.732-1.732a5.25 5.25 0 001.538-3.712l.003-2.024a.668.668 0 01.198-.471 1.575 1.575 0 10-2.228-2.228 3.818 3.818 0 00-1.12 2.687M6.9 7.575V12m6.27 4.318A4.49 4.49 0 0116.35 15m.002 0h-.002" />
+  </svg>
+            </svg>
+          </div>
+          <div class="stat-info">
+            <h3 id="stat-total-patients">0</h3>
+            <p>Patients Evaluated</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon red">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+            </svg>
+          </div>
+          <div class="stat-info">
+            <h3 id="stat-high-risk">0</h3>
+            <p>High Risk Warnings</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon mint">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.348 14.651a3.75 3.75 0 010-5.303m5.304 0a3.75 3.75 0 010 5.303m-7.425 2.122a6.75 6.75 0 010-9.546m9.546 0a6.75 6.75 0 010 9.546M5.106 18.894c-3.808-3.807-3.808-9.98 0-13.788m13.788 0c3.807 3.808 3.807 9.981 0 13.788M12 12h.008v.008H12V12z" />
+            </svg>
+          </div>
+          <div class="stat-info">
+            <h3 id="stat-active-sync">Inactive</h3>
+            <p>BLE Sync Status</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Setup Warnings Hidden -->
+
+      <!-- Recent Evaluations Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Recent Stroke Risk Evaluations</h2>
+          <button class="btn btn-text" id="btn-clear-history">Clear History</button>
+        </div>
+        <div class="table-container">
+          <table class="evaluation-table" id="history-table">
+            <thead>
+              <tr>
+                <th>Date/Time</th>
+                <th>Patient Details</th>
+                <th>Heart Rate</th>
+                <th>Glucose (mg/dL)</th>
+                <th>Risk Category</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamic content added by app.js -->
+              <tr class="empty-row">
+                <td colspan="6">No patient evaluations recorded yet. Run a Stroke Analyzer sync to start.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- STROKE ANALYZER VIEW -->
+    <section id="analyzer-tab" class="tab-content">
+      <header class="content-header">
+        <div>
+          <h1>Stroke Risk Analyzer</h1>
+          <p>Synchronize health telemetry metrics via BLE and evaluate risk factors using AI.</p>
+        </div>
+      </header>
+
+      <div class="analyzer-grid">
+        <!-- Input & Device Control Panel -->
+        <div class="panel input-panel">
+          <div class="panel-header">
+            <h2>ESP32 BLE Data Sync</h2>
+            <div class="status-indicator">
+              <span class="pulse-dot grey" id="ble-status-dot"></span>
+              <span class="badge" id="ble-status-badge">Disconnected</span>
+            </div>
+          </div>
+
+          <!-- Connection Hub Buttons -->
+          <div class="sync-actions-hub">
+            <button class="btn btn-primary" id="btn-ble-connect">
+              <svg class="icon-spin-hidden" id="ble-icon-spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:18px;height:18px;display:none;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+              </svg>
+              <svg id="ble-icon-bt" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width:18px;height:18px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12m-6-9v9M12 9a3 3 0 110-6 3 3 0 010 6zm0 12a3 3 0 100-6 3 3 0 000 6z" />
+              </svg>
+              <span id="btn-ble-text">Connect BLE Device</span>
+            </button>
+
+            <button class="btn btn-secondary" id="btn-simulate-ble">
+              <span>Simulate ESP32 Stream</span>
+            </button>
+          </div>
+
+          <div class="device-log" id="ble-log-console">
+            <p class="log-entry system">[System] Device interface ready. Press 'Connect BLE Device' to pair.</p>
+          </div>
+
+          <hr class="panel-divider">
+
+          <form id="patient-form" class="patient-form">
+            <h2>Patient Parameters Form</h2>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="patient-name">Patient Name / Ref ID</label>
+                <input type="text" id="patient-name" placeholder="Anonymous Patient" required>
+              </div>
+
+              <div class="form-group">
+                <label for="patient-age">Age (Years)</label>
+                <input type="number" id="patient-age" placeholder="e.g. 68" min="1" max="120" required>
+              </div>
+
+              <div class="form-group">
+                <label for="patient-gender">Gender</label>
+                <select id="patient-gender">
+                  <option value="Female">Female</option>
+                  <option value="Male">Male</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="patient-heartrate">Heart Rate (BPM)</label>
+                <input type="number" id="patient-heartrate" placeholder="BLE sensor or manual" min="30" max="220" required>
+              </div>
+
+              <div class="form-group">
+                <label for="patient-glucose">Avg Glucose Level (mg/dL)</label>
+                <input type="number" id="patient-glucose" placeholder="BLE sensor or manual" min="50" max="500" required>
+              </div>
+
+              <div class="form-group">
+                <label for="patient-bmi">BMI (kg/m²)</label>
+                <input type="number" step="0.1" id="patient-bmi" placeholder="e.g. 28.4" min="10" max="60" required>
+              </div>
+
+              <div class="form-group">
+                <label for="patient-hypertension">Hypertension History</label>
+                <select id="patient-hypertension">
+                  <option value="No">No History</option>
+                  <option value="Yes">Has Hypertension</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="patient-smoking">Smoking Status</label>
+                <select id="patient-smoking">
+                  <option value="Never Smoked">Never Smoked</option>
+                  <option value="Formerly Smoked">Formerly Smoked</option>
+                  <option value="Regularly Smokes">Regularly Smokes</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-teal-solid btn-full-width" id="btn-run-analysis">
+              <span>Analyze Stroke Risk (AI)</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Result & Report Panel -->
+        <div class="panel result-panel loading-blur" id="result-pane-container">
+          <div class="result-placeholder" id="report-empty-placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+            </svg>
+            <h3>Awaiting Evaluation</h3>
+            <p>Sync medical parameters and click 'Analyze Stroke Risk' to trigger the Gemini clinical decision audit.</p>
+          </div>
+
+          <div class="result-report-content" id="report-view-content" style="display:none;">
+            <div class="report-header">
+              <div>
+                <h2>Clinical Analysis Report</h2>
+                <p id="report-timestamp">Generated on July 18, 2026</p>
+              </div>
+              <div class="report-actions">
+                <button class="btn btn-icon-only" id="btn-export-csv" title="Export CSV Record">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                  </svg>
+                </button>
+                <button class="btn btn-icon-only" id="btn-print-report" title="Print to PDF">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.82l-.24.03a6.3 6.3 0 00-6.19 6.22c.007.228.02.454.04.68l.05.5h18.36l.05-.5a6.3 6.3 0 00-6.19-6.22l-.24-.03m-9.06 0a6.3 6.3 0 0112 0m-12 0h12M12 9V3m0 0l3 3m-3-3L9 6" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Risk Score Widget -->
+            <div class="risk-gauge-container">
+              <div class="risk-gauge-graphic">
+                <svg viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" class="gauge-bg" />
+                  <circle cx="50" cy="50" r="40" class="gauge-fill" id="gauge-fill-ring" stroke-dasharray="251.2" stroke-dashoffset="251.2" />
+                </svg>
+                <div class="gauge-center">
+                  <span id="risk-score-percent">0%</span>
+                  <span class="label">EST. RISK</span>
+                </div>
+              </div>
+              <div class="risk-summary">
+                <span class="risk-badge" id="risk-category-badge">LOW RISK</span>
+                <h4 id="patient-display-summary">Patient Ref: Anonymous</h4>
+                <p>Calculated based on clinical factor correlation and AI assessment model output.</p>
+              </div>
+            </div>
+
+            <!-- Detailed Advice -->
+            <div class="report-section">
+              <h3>AI Clinical Findings & Insights</h3>
+              <div class="ai-findings-markdown" id="findings-container">
+                <!-- Injected Markdown -->
+              </div>
+            </div>
+
+            <div class="alert-disclaimer">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <p><strong>Clinical Notice:</strong> This assessment is generated using Google Gemini AI as an analysis assistant. It does not replace a professional clinical diagnosis or doctor-led medical testing.</p>
+            </div>
+          </div>
+
+          <!-- Loading Spinner Pane -->
+          <div class="loading-overlay" id="analyzer-spinner" style="display:none;">
+            <div class="spinner"></div>
+            <p>Querying Gemini Clinical Engine...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI CHAT ASSISTANT VIEW -->
+    <section id="chat-tab" class="tab-content">
+      <header class="content-header">
+        <div>
+          <h1>AI Medical Assistant</h1>
+          <p>Ask follow-up questions, retrieve medical guidance, or summarize clinical findings.</p>
+        </div>
+      </header>
+
+      <div class="chat-container">
+        <!-- Chat history -->
+        <div class="chat-messages" id="chat-messages-container">
+          <div class="message assistant">
+            <div class="message-avatar">AI</div>
+            <div class="message-bubble">
+              <p>Hello! I am your clinical support chatbot. How can I assist you with patient files, stroke guidelines, or general medical queries today?</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Suggestion Chips -->
+        <div class="chat-suggestions">
+          <button class="chip" onclick="sendSuggestion('What are the primary clinical warning signs of an acute stroke?')">Stroke Warning Signs</button>
+          <button class="chip" onclick="sendSuggestion('How does average glucose level correlate with long-term vascular blockages?')">Glucose & Vascular Risk</button>
+          <button class="chip" onclick="sendSuggestion('Provide patient advice to control moderate hypertension.')">Hypertension Control</button>
+        </div>
+
+        <!-- Chat input bar -->
+        <form class="chat-input-bar" id="chat-input-form">
+          <input type="text" id="chat-input-text" placeholder="Type clinical query or patient follow-up..." required autocomplete="off">
+          <button type="submit" class="btn btn-teal-solid btn-icon-send" id="btn-send-message">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+            </svg>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- SETTINGS VIEW -->
+    <section id="settings-tab" class="tab-content">
+      <header class="content-header">
+        <div>
+          <h1>System Configuration</h1>
+          <p>Manage API credentials, Bluetooth parameters, and saved clinical data storage.</p>
+        </div>
+      </header>
+
+
+          <button class="btn btn-teal-solid" id="btn-save-settings">Save AI Configuration</button>
+        </div>
+
+        <div class="panel">
+          <h2>Bluetooth BLE Telemetry Configuration</h2>
+          <div class="form-group">
+            <label for="settings-ble-name">Device Name Filter</label>
+            <input type="text" id="settings-ble-name" value="ESP32-Stroke-Monitor">
+          </div>
+          
+          <div class="form-group">
+            <label for="settings-ble-uuid">Custom Data Characteristic UUID (Optional)</label>
+            <input type="text" id="settings-ble-uuid" placeholder="e.g. 0000ffe1-0000-1000-8000-00805f9b34fb (Empty for default)">
+            <p class="input-help-text">Leave blank to let the system auto-discover readable characteristics matching typical JSON output packages.</p>
+          </div>
+
+          <button class="btn btn-secondary" id="btn-save-ble-settings">Save Bluetooth Profiles</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

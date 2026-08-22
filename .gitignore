@@ -1,0 +1,3 @@
+# Exclude local API keys and credentials configuration
+.env
+config.js

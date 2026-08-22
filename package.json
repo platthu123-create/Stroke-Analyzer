@@ -1,0 +1,14 @@
+{
+  "name": "stroke-risk-analyzer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Stroke Risk Analyzer frontend and Gemini backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
