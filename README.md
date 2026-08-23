@@ -24,27 +24,6 @@ Designed with a clean, medical-themed clinical aesthetic (Teal & Mint), it runs 
 
 *Note: The Web Bluetooth API requires either a local host connection (`localhost`) or an HTTPS connection to function due to browser security guidelines. The backend must run alongside the frontend for AI features.*
 
----
-
-## 2. Deploying to GitHub Pages (Share with others)
-To host the app online for free so your sister or other doctors can open it via a web link:
-
-1. **Create a GitHub Repository:**
-   - Log into [GitHub](https://github.com).
-   - Click **New Repository**, name it (e.g., `cardioguard-ai`), and set it to **Public**.
-2. **Upload the Files:**
-   - Upload `index.html`, `style.css`, and `app.js` to the repository.
-3. **Enable GitHub Pages:**
-   - Go to your repository's **Settings** tab.
-   - On the left sidebar, click **Pages**.
-   - Under *Build and deployment -> Source*, select **Deploy from a branch**.
-   - Under *Branch*, select **main** (or `master`) and click **Save**.
-4. **Access the Link:**
-   - Within 1-2 minutes, GitHub will generate a public link (e.g., `https://your-username.github.io/cardioguard-ai/`).
-   - Your sister can open this link on her computer, enter her own Gemini API key in her Settings tab (saved securely on her device), and pair her ESP32.
-
----
-
 ## 3. Programming your ESP32 (C++ Bluetooth BLE Server)
 To send data to the application from your ESP32, upload this C++ code using the Arduino IDE. It initializes a BLE server advertising as `ESP32-Stroke-Monitor` and broadcasts patient vitals in a JSON structure.
 

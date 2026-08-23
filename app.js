@@ -19,6 +19,7 @@ const state = {
 
 // Default BLE UUIDs (standard clinical telemetry profiles or generic UART)
 const TELEMETRY_SERVICE_UUID = '0000180d'; // Heart Rate Service (standard) or custom
+const HEART_RATE_SERVICE_UUID = 'heart_rate';
 // Custom/UART RX characteristic commonly used on ESP32 BLE
 const GENERIC_CHARACTERISTIC_UUID = '00002a37'; // Heart Rate Measurement characteristic
 
@@ -298,10 +299,11 @@ async function connectToBleDevice() {
     updateBleConnectionUI('connecting');
     logToBleConsole(`Scanning for Bluetooth devices starting with: "${state.bleDeviceName}"...`, 'system');
 
-    // Scan parameters
+    const filters = [{ services: [HEART_RATE_SERVICE_UUID] }];
+    if (state.bleDeviceName) filters.push({ namePrefix: state.bleDeviceName });
     const options = {
-      filters: [{ namePrefix: state.bleDeviceName }],
-      optionalServices: [TELEMETRY_SERVICE_UUID, 'heart_rate']
+      filters,
+      optionalServices: [TELEMETRY_SERVICE_UUID, HEART_RATE_SERVICE_UUID]
     };
 
     // Prompt user to select device
@@ -380,18 +382,16 @@ function onBleDisconnected() {
 // Read and parse BLE packages
 function onBleDataReceived(event) {
   const value = event.target.value;
-  const decoder = new TextDecoder('utf-8');
-  const decodedText = decoder.decode(value);
-  
-  logToBleConsole(`Data packet: ${decodedText.trim()}`, 'data');
-  
+
   try {
+    const decodedText = new TextDecoder('utf-8', { fatal: true }).decode(value).trim();
     const data = JSON.parse(decodedText);
+    logToBleConsole(`Data packet: ${decodedText}`, 'data');
     populateTelemetryForm(data);
   } catch (error) {
-    // If not clean JSON, check if it's standard binary/heart rate value
-    if (value.byteLength > 0) {
-      const bpm = value.getUint8(1); // Standard Heart Rate Measurement format
+    if (value.byteLength >= 2) {
+      const flags = value.getUint8(0);
+      const bpm = (flags & 0x01) !== 0 ? value.getUint16(1, true) : value.getUint8(1);
       populateTelemetryForm({ heartRate: bpm });
       logToBleConsole(`Raw BPM Extracted: ${bpm}`, 'data');
     } else {
