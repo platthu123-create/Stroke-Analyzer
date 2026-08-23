@@ -31,7 +31,15 @@ app.post('/api/gemini', async (req, res) => {
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents })
+      body: JSON.stringify({
+        contents,
+        generationConfig: {
+          temperature: 0,
+          topK: 1,
+          topP: 1,
+          seed: 42
+        }
+      })
     });
     const data = await response.json();
     res.status(response.status).json(data);

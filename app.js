@@ -504,7 +504,7 @@ Provide a structured assessment containing:
 4. "CLINICAL RECOMMENDATIONS": List specific, actionable medical/preventive recommendations for this patient.
 
 Formatting requirement:
-Use clean Markdown formatting. Make sure the first line of your response contains the estimated percentage risk and category badge formatted exactly like this:
+Use clean Markdown formatting. Calculate the estimate consistently from the supplied parameters. Do not vary the estimate between requests with identical parameters. Make sure the first line of your response contains only this exact format:
 RISK_PERCENT: [Number]% | RISK_LEVEL: [LOW/MODERATE/HIGH]
 
 Keep the findings concise and easy to read.`;
