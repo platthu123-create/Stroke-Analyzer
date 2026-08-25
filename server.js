@@ -10,8 +10,47 @@ const hasGeminiApiKey = Boolean(geminiApiKey && geminiApiKey !== 'your_gemini_ap
 app.use(express.json({ limit: '1mb' }));
 app.use(express.static(__dirname));
 
+// --- CORS: allow the ESP32 (and any device on your LAN) to POST to this server ---
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+  next();
+});
+
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, configured: hasGeminiApiKey });
+});
+
+// --- In-memory store for latest ESP32 reading (swap for a DB later if needed) ---
+let latestSensorData = null;
+
+// ESP32 -> Server: POST sensor readings here
+app.post('/api/sensor-data', (req, res) => {
+  const payload = req.body;
+
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+    return res.status(400).json({ error: { message: 'Request body must be a JSON object.' } });
+  }
+
+  latestSensorData = {
+    ...payload,
+    receivedAt: new Date().toISOString()
+  };
+
+  console.log('Received sensor data from ESP32:', latestSensorData);
+  res.status(201).json({ ok: true, received: latestSensorData });
+});
+
+// Optional: let your frontend (or you, for testing) fetch the latest reading
+app.get('/api/sensor-data', (req, res) => {
+  if (!latestSensorData) {
+    return res.status(404).json({ error: { message: 'No sensor data received yet.' } });
+  }
+  res.json(latestSensorData);
 });
 
 app.post('/api/gemini', async (req, res) => {
@@ -49,6 +88,8 @@ app.post('/api/gemini', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Stroke Risk Analyzer running at http://localhost:${port}`);
+-
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Stroke Risk Analyzer running at http://0.0.0.0:${port}`);
+  console.log('On your LAN, the ESP32 should POST to: http://<your-laptop-local-IP>:' + port + '/api/sensor-data');
 });
