@@ -88,7 +88,6 @@ app.post('/api/gemini', async (req, res) => {
   }
 });
 
--
 app.listen(port, '0.0.0.0', () => {
   console.log(`Stroke Risk Analyzer running at http://0.0.0.0:${port}`);
   console.log('On your LAN, the ESP32 should POST to: http://<your-laptop-local-IP>:' + port + '/api/sensor-data');
