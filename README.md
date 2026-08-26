@@ -101,7 +101,8 @@ void loop() {
         jsonPayload += "\"age\":72,";
         jsonPayload += "\"heartRate\":" + String(currentBPM) + ",";
         jsonPayload += "\"avgGlucose\":" + String(currentGlucose) + ",";
-        jsonPayload += "\"bmi\":31.2,";
+        jsonPayload += "\"spo2\":97.4,";
+        jsonPayload += "\"wholeBodyAcceleration\":1.04,";
         // 1 = Has hypertension history, 0 = No history
         jsonPayload += "\"hypertension\":" + String(random(0, 2)) + ","; 
         jsonPayload += "\"smokingStatus\":\"formerly\"";

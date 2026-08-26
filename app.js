@@ -404,7 +404,10 @@ function populateTelemetryForm(data) {
   if (data.age) document.getElementById('patient-age').value = data.age;
   if (data.heartRate) document.getElementById('patient-heartrate').value = data.heartRate;
   if (data.avgGlucose) document.getElementById('patient-glucose').value = data.avgGlucose;
-  if (data.bmi) document.getElementById('patient-bmi').value = data.bmi;
+  if (data.spo2 !== undefined) document.getElementById('patient-spo2').value = data.spo2;
+  if (data.wholeBodyAcceleration !== undefined) {
+    document.getElementById('patient-acceleration').value = data.wholeBodyAcceleration;
+  }
   
   if (data.hypertension !== undefined) {
     const val = data.hypertension === 1 || data.hypertension === true || data.hypertension === 'Yes' ? 'Yes' : 'No';
@@ -445,7 +448,8 @@ function simulateBleSync() {
           age: 72,
           heartRate: 88,
           avgGlucose: 242,
-          bmi: 31.2,
+          spo2: 97.4,
+          wholeBodyAcceleration: 1.04,
           hypertension: 1,
           smokingStatus: 'formerly'
         };
@@ -475,7 +479,8 @@ async function executeStrokeAnalysis() {
   const pGender = document.getElementById('patient-gender').value;
   const pHeart = document.getElementById('patient-heartrate').value;
   const pGlucose = document.getElementById('patient-glucose').value;
-  const pBmi = document.getElementById('patient-bmi').value;
+  const pSpo2 = document.getElementById('patient-spo2').value;
+  const pAcceleration = document.getElementById('patient-acceleration').value;
   const pHypert = document.getElementById('patient-hypertension').value;
   const pSmoke = document.getElementById('patient-smoking').value;
 
@@ -485,7 +490,7 @@ async function executeStrokeAnalysis() {
 
   // Prompt Construction
   const prompt = `You are a clinical decision support AI specializing in cardiovascular health and stroke risk management.
-Evaluate this patient's stroke risk using established clinical correlations (e.g., correlations of age, hypertension, glucose, BMI, and smoking status with stroke incidence).
+Evaluate this patient's stroke risk using established clinical correlations (e.g., correlations of age, hypertension, glucose, oxygen saturation, physical activity, and smoking status with stroke incidence).
 
 Patient parameters:
 - Name/Ref ID: ${pName}
@@ -493,7 +498,8 @@ Patient parameters:
 - Gender: ${pGender}
 - Heart Rate: ${pHeart} BPM
 - Average Glucose Level: ${pGlucose} mg/dL
-- BMI: ${pBmi}
+- SpO2: ${pSpo2}%
+- Whole-body acceleration: ${pAcceleration} m/s²
 - History of Hypertension: ${pHypert}
 - Smoking Status: ${pSmoke}
 
@@ -525,7 +531,8 @@ Keep the findings concise and easy to read.`;
       gender: pGender,
       heartRate: pHeart,
       glucose: pGlucose,
-      bmi: pBmi,
+      spo2: pSpo2,
+      wholeBodyAcceleration: pAcceleration,
       hypertension: pHypert,
       smoking: pSmoke,
       riskPercentage: parsedData.percentage,
@@ -723,7 +730,8 @@ function loadHistoryToReport(index) {
   document.getElementById('patient-gender').value = rec.gender;
   document.getElementById('patient-heartrate').value = rec.heartRate;
   document.getElementById('patient-glucose').value = rec.glucose;
-  document.getElementById('patient-bmi').value = rec.bmi;
+  document.getElementById('patient-spo2').value = rec.spo2;
+  document.getElementById('patient-acceleration').value = rec.wholeBodyAcceleration;
   document.getElementById('patient-hypertension').value = rec.hypertension;
   document.getElementById('patient-smoking').value = rec.smoking;
 
@@ -833,7 +841,8 @@ function exportReportCSV(name, percentage, level, findingsText) {
     ['Gender', document.getElementById('patient-gender').value],
     ['Heart Rate (BPM)', document.getElementById('patient-heartrate').value],
     ['Avg Glucose Level', document.getElementById('patient-glucose').value],
-    ['BMI', document.getElementById('patient-bmi').value],
+    ['SpO2 (%)', document.getElementById('patient-spo2').value],
+    ['Whole-body acceleration (m/s²)', document.getElementById('patient-acceleration').value],
     ['Hypertension', document.getElementById('patient-hypertension').value],
     ['Smoking Status', document.getElementById('patient-smoking').value],
     ['AI Findings', findingsText.replace(/\n/g, ' ')]
