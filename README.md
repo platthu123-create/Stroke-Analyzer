@@ -92,15 +92,13 @@ void setup() {
 
 void loop() {
     if (deviceConnected) {
-        // 1. Read your physical medical sensors here (e.g., heart rate and glucose level)
+        // 1. Read your physical medical sensors here
         int currentBPM = random(65, 95);     // Replace with physical sensor values
-        int currentGlucose = random(80, 220); // Replace with physical sensor values
         
         // 2. Format vital readings as a clean JSON payload
         String jsonPayload = "{";
         jsonPayload += "\"age\":72,";
         jsonPayload += "\"heartRate\":" + String(currentBPM) + ",";
-        jsonPayload += "\"avgGlucose\":" + String(currentGlucose) + ",";
         jsonPayload += "\"spo2\":97.4,";
         jsonPayload += "\"wholeBodyAcceleration\":1.04,";
         // 1 = Has hypertension history, 0 = No history
@@ -122,5 +120,4 @@ void loop() {
 
 ### Tips for Customizing ESP32 Sensors:
 1. **Heart Rate Vitals:** If using a pulse oximeter module (like MAX30102), replace `random(65, 95)` with your calculated beats-per-minute value.
-2. **Vascular glucose levels:** Replace `random(80, 220)` with your blood glucose sensor output.
 3. **UUID Customization:** If you want to use custom UUIDs instead of standard Heart Rate profiles, update them in the ESP32 code and corresponding fields in Stroke Risk Analyzer's **Settings** tab.

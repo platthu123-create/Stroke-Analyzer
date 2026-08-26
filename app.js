@@ -403,7 +403,6 @@ function onBleDataReceived(event) {
 function populateTelemetryForm(data) {
   if (data.age) document.getElementById('patient-age').value = data.age;
   if (data.heartRate) document.getElementById('patient-heartrate').value = data.heartRate;
-  if (data.avgGlucose) document.getElementById('patient-glucose').value = data.avgGlucose;
   if (data.spo2 !== undefined) document.getElementById('patient-spo2').value = data.spo2;
   if (data.wholeBodyAcceleration !== undefined) {
     document.getElementById('patient-acceleration').value = data.wholeBodyAcceleration;
@@ -447,7 +446,6 @@ function simulateBleSync() {
         const mockPayload = {
           age: 72,
           heartRate: 88,
-          avgGlucose: 242,
           spo2: 97.4,
           wholeBodyAcceleration: 1.04,
           hypertension: 1,
@@ -478,7 +476,6 @@ async function executeStrokeAnalysis() {
   const pAge = document.getElementById('patient-age').value;
   const pGender = document.getElementById('patient-gender').value;
   const pHeart = document.getElementById('patient-heartrate').value;
-  const pGlucose = document.getElementById('patient-glucose').value;
   const pSpo2 = document.getElementById('patient-spo2').value;
   const pAcceleration = document.getElementById('patient-acceleration').value;
   const pHypert = document.getElementById('patient-hypertension').value;
@@ -490,14 +487,13 @@ async function executeStrokeAnalysis() {
 
   // Prompt Construction
   const prompt = `You are a clinical decision support AI specializing in cardiovascular health and stroke risk management.
-Evaluate this patient's stroke risk using established clinical correlations (e.g., correlations of age, hypertension, glucose, oxygen saturation, physical activity, and smoking status with stroke incidence).
+Evaluate this patient's stroke risk using established clinical correlations (e.g., correlations of age, hypertension, oxygen saturation, physical activity, and smoking status with stroke incidence).
 
 Patient parameters:
 - Name/Ref ID: ${pName}
 - Age: ${pAge} Years
 - Gender: ${pGender}
 - Heart Rate: ${pHeart} BPM
-- Average Glucose Level: ${pGlucose} mg/dL
 - SpO2: ${pSpo2}%
 - Whole-body acceleration: ${pAcceleration} m/s²
 - History of Hypertension: ${pHypert}
@@ -530,7 +526,6 @@ Keep the findings concise and easy to read.`;
       age: pAge,
       gender: pGender,
       heartRate: pHeart,
-      glucose: pGlucose,
       spo2: pSpo2,
       wholeBodyAcceleration: pAcceleration,
       hypertension: pHypert,
@@ -708,7 +703,6 @@ function renderHistoryTable() {
         <div class="sub-detail">Age: ${rec.age} | ${rec.gender}</div>
       </td>
       <td>${rec.heartRate} BPM</td>
-      <td>${rec.glucose} mg/dL</td>
       <td>
         <span class="risk-label ${rec.riskLevel.toLowerCase()}">${rec.riskLevel} (${rec.riskPercentage}%)</span>
       </td>
@@ -729,7 +723,6 @@ function loadHistoryToReport(index) {
   document.getElementById('patient-age').value = rec.age;
   document.getElementById('patient-gender').value = rec.gender;
   document.getElementById('patient-heartrate').value = rec.heartRate;
-  document.getElementById('patient-glucose').value = rec.glucose;
   document.getElementById('patient-spo2').value = rec.spo2;
   document.getElementById('patient-acceleration').value = rec.wholeBodyAcceleration;
   document.getElementById('patient-hypertension').value = rec.hypertension;
@@ -840,7 +833,6 @@ function exportReportCSV(name, percentage, level, findingsText) {
     ['Age (Years)', document.getElementById('patient-age').value],
     ['Gender', document.getElementById('patient-gender').value],
     ['Heart Rate (BPM)', document.getElementById('patient-heartrate').value],
-    ['Avg Glucose Level', document.getElementById('patient-glucose').value],
     ['SpO2 (%)', document.getElementById('patient-spo2').value],
     ['Whole-body acceleration (m/s²)', document.getElementById('patient-acceleration').value],
     ['Hypertension', document.getElementById('patient-hypertension').value],

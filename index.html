@@ -135,7 +135,6 @@
                 <th>Date/Time</th>
                 <th>Patient Details</th>
                 <th>Heart Rate</th>
-                <th>Glucose (mg/dL)</th>
                 <th>Risk Category</th>
                 <th>Actions</th>
               </tr>
@@ -143,7 +142,7 @@
             <tbody>
               <!-- Dynamic content added by app.js -->
               <tr class="empty-row">
-                <td colspan="6">No patient evaluations recorded yet. Run a Stroke Analyzer sync to start.</td>
+                <td colspan="5">No patient evaluations recorded yet. Run a Stroke Analyzer sync to start.</td>
               </tr>
             </tbody>
           </table>
@@ -219,11 +218,6 @@
               <div class="form-group">
                 <label for="patient-heartrate">Heart Rate (BPM)</label>
                 <input type="number" id="patient-heartrate" placeholder="BLE sensor or manual" min="30" max="220" required>
-              </div>
-
-              <div class="form-group">
-                <label for="patient-glucose">Avg Glucose Level (mg/dL)</label>
-                <input type="number" id="patient-glucose" placeholder="BLE sensor or manual" min="50" max="500" required>
               </div>
 
               <div class="form-group">
@@ -357,7 +351,6 @@
         <!-- Suggestion Chips -->
         <div class="chat-suggestions">
           <button class="chip" onclick="sendSuggestion('What are the primary clinical warning signs of an acute stroke?')">Stroke Warning Signs</button>
-          <button class="chip" onclick="sendSuggestion('How does average glucose level correlate with long-term vascular blockages?')">Glucose & Vascular Risk</button>
           <button class="chip" onclick="sendSuggestion('Provide patient advice to control moderate hypertension.')">Hypertension Control</button>
         </div>
 
