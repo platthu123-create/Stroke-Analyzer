@@ -22,6 +22,7 @@
   --risk-inactive: #94a3b8;    /* Slate Gray */
 
   --font-family: 'Outfit', sans-serif;
+  --title-font: 'Montserrat', 'Outfit', sans-serif;
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
@@ -86,6 +87,22 @@ body {
   width: 24px;
   height: 24px;
   color: #ffffff;
+}
+
+.logo-text h2,
+.logo-text h2 span,
+.content-header h1,
+.app-title,
+.panel-header h2,
+.info-alert-card h4,
+.stat-info h3,
+.report-header h2,
+.report-section h3,
+.result-placeholder h3,
+.chat-messages .message-bubble strong,
+.message.assistant .message-bubble strong,
+.message.user .message-bubble strong {
+  font-family: var(--title-font) !important;
 }
 
 .logo-text h2 {
@@ -234,7 +251,9 @@ body {
   margin-bottom: 30px;
 }
 
-.content-header h1 {
+.content-header h1,
+.app-title {
+  font-family: var(--title-font) !important;
   font-size: 1.85rem;
   font-weight: 800;
   color: var(--text-main);

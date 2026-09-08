@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Set current date on dashboard
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', options);
+  document.getElementById('current-date').innerText = new Date().toLocaleDateString('vi-VN', options);
 });
 
 // -------------------------------------------------------------
@@ -111,7 +111,7 @@ function saveGeneralSettings() {
     }
   }
 
-  showToast('AI configuration saved successfully!', 'success');
+  showToast('Cấu hình AI đã được lưu thành công!', 'success');
 }
 
 function saveBleSettings() {
@@ -123,16 +123,16 @@ function saveBleSettings() {
   state.bleDeviceName = bleNameInput;
   state.bleCustomCharacteristicUuid = bleUuidInput;
 
-  showToast('Bluetooth settings updated!', 'success');
+  showToast('Cài đặt Bluetooth đã được cập nhật!', 'success');
 }
 
 function wipeLocalStorage() {
-  if (confirm('Are you sure you want to wipe all stored patient data, API keys, and device configurations? This action is irreversible.')) {
+  if (confirm('Bạn có chắc chắn muốn xóa toàn bộ dữ liệu bệnh nhân, khóa API và cấu hình thiết bị đã lưu? Hành động này không thể hoàn tác.')) {
     localStorage.clear();
     loadSettings();
     renderHistoryTable();
     updateDashboardStats();
-    showToast('Application cache cleared.', 'info');
+    showToast('Bộ nhớ ứng dụng đã được xóa.', 'info');
   }
 }
 
@@ -236,36 +236,36 @@ function updateBleConnectionUI(status) {
   globalDot.className = 'pulse-dot';
 
   if (status === 'connected') {
-    statusBadge.innerText = 'Connected';
+    statusBadge.innerText = 'Đã kết nối';
     statusBadge.className = 'badge badge-connected';
     statusDot.classList.add('green');
     globalDot.classList.add('green');
-    globalText.innerText = 'ESP32 Sync Active';
-    connectBtnText.innerText = 'Disconnect ESP32';
+    globalText.innerText = 'ESP32 đang đồng bộ';
+    connectBtnText.innerText = 'Ngắt kết nối ESP32';
     spinner.style.display = 'none';
     btIcon.style.display = 'inline-block';
-    dashboardSyncStatus.innerText = 'Sync Active';
+    dashboardSyncStatus.innerText = 'Đang đồng bộ';
     dashboardSyncStatus.parentElement.parentElement.querySelector('.stat-icon').style.backgroundColor = '#e6fcf5';
   } else if (status === 'connecting') {
-    statusBadge.innerText = 'Connecting...';
+    statusBadge.innerText = 'Đang kết nối...';
     statusBadge.className = 'badge';
     statusDot.classList.add('blue');
     globalDot.classList.add('blue');
-    globalText.innerText = 'Connecting BLE...';
-    connectBtnText.innerText = 'Connecting...';
+    globalText.innerText = 'Đang kết nối BLE...';
+    connectBtnText.innerText = 'Đang kết nối...';
     spinner.style.display = 'inline-block';
     btIcon.style.display = 'none';
-    dashboardSyncStatus.innerText = 'Connecting...';
+    dashboardSyncStatus.innerText = 'Đang kết nối...';
   } else {
-    statusBadge.innerText = 'Disconnected';
+    statusBadge.innerText = 'Mất kết nối';
     statusBadge.className = 'badge badge-disconnected';
     statusDot.classList.add('grey');
     globalDot.classList.add('grey');
-    globalText.innerText = 'ESP32 Offline';
-    connectBtnText.innerText = 'Connect BLE Device';
+    globalText.innerText = 'ESP32 ngoại tuyến';
+    connectBtnText.innerText = 'Kết nối thiết bị BLE';
     spinner.style.display = 'none';
     btIcon.style.display = 'inline-block';
-    dashboardSyncStatus.innerText = 'Inactive';
+    dashboardSyncStatus.innerText = 'Không hoạt động';
     dashboardSyncStatus.parentElement.parentElement.querySelector('.stat-icon').style.backgroundColor = '#f1f5f9';
   }
 }
@@ -289,8 +289,8 @@ function initBleSync() {
 
 async function connectToBleDevice() {
   if (!navigator.bluetooth) {
-    logToBleConsole('Web Bluetooth API is not supported in this browser. Please use Chrome/Edge or run via HTTPS/Localhost.', 'error');
-    showToast('Bluetooth not supported in browser', 'error');
+    logToBleConsole('Web Bluetooth API không được hỗ trợ trên trình duyệt này. Vui lòng dùng Chrome/Edge hoặc chạy qua HTTPS/Localhost.', 'error');
+    showToast('Bluetooth không được hỗ trợ trên trình duyệt', 'error');
     return;
   }
 
@@ -314,7 +314,7 @@ async function connectToBleDevice() {
     // Connect to GATT
     const server = await state.bleDevice.gatt.connect();
     
-    logToBleConsole('GATT Server connected! Discovering primary services...', 'success');
+    logToBleConsole('GATT Server đã kết nối! Đang khám phá dịch vụ chính...', 'success');
     
     // Auto handle device disconnection
     state.bleDevice.addEventListener('gattserverdisconnected', onBleDisconnected);
@@ -323,26 +323,26 @@ async function connectToBleDevice() {
     let service;
     try {
       service = await server.getPrimaryService(TELEMETRY_SERVICE_UUID);
-      logToBleConsole(`Primary Service [${TELEMETRY_SERVICE_UUID}] discovered.`, 'success');
+      logToBleConsole(`Dịch vụ chính [${TELEMETRY_SERVICE_UUID}] đã được phát hiện.`, 'success');
     } catch (e) {
       // Fallback: try heart_rate standard service
       service = await server.getPrimaryService('heart_rate');
-      logToBleConsole('Primary Service [heart_rate] discovered.', 'success');
+      logToBleConsole('Dịch vụ chính [heart_rate] đã được phát hiện.', 'success');
     }
 
     // Try to discover characteristics
     const characteristicUuid = state.bleCustomCharacteristicUuid.toLowerCase() || GENERIC_CHARACTERISTIC_UUID;
     try {
       state.bleCharacteristic = await service.getCharacteristic(characteristicUuid);
-      logToBleConsole(`Characteristic [${characteristicUuid}] discovered.`, 'success');
+      logToBleConsole(`Đặc tính [${characteristicUuid}] đã được phát hiện.`, 'success');
     } catch (e) {
       // Fallback: try reading the first readable/notifiable characteristic
       const characteristics = await service.getCharacteristics();
       if (characteristics.length > 0) {
         state.bleCharacteristic = characteristics[0];
-        logToBleConsole(`Auto-discovered characteristic: ${state.bleCharacteristic.uuid}`, 'system');
+        logToBleConsole(`Đặc tính tự động phát hiện: ${state.bleCharacteristic.uuid}`, 'system');
       } else {
-        throw new Error('No Bluetooth characteristics found on the device.');
+        throw new Error('Không tìm thấy đặc tính Bluetooth nào trên thiết bị.');
       }
     }
 
@@ -350,13 +350,13 @@ async function connectToBleDevice() {
     await state.bleCharacteristic.startNotifications();
     state.bleCharacteristic.addEventListener('characteristicvaluechanged', onBleDataReceived);
     
-    logToBleConsole('Active notification stream configured. Waiting for sensor transmission...', 'success');
+    logToBleConsole('Luồng thông báo đang hoạt động. Đang chờ truyền dữ liệu cảm biến...', 'success');
     updateBleConnectionUI('connected');
-    showToast('ESP32 BLE connected successfully!', 'success');
+    showToast('Đã kết nối BLE ESP32 thành công!', 'success');
     
   } catch (error) {
-    console.error('BLE Connection error:', error);
-    logToBleConsole(`Connection Failed: ${error.message}`, 'error');
+    console.error('Lỗi kết nối BLE:', error);
+    logToBleConsole(`Kết nối thất bại: ${error.message}`, 'error');
     disconnectBle();
   } finally {
     state.isBleConnecting = false;
@@ -365,7 +365,7 @@ async function connectToBleDevice() {
 
 function disconnectBle() {
   if (state.bleDevice && state.bleDevice.gatt.connected) {
-    logToBleConsole('Initiating clean disconnect from GATT server...', 'system');
+    logToBleConsole('Đang thực hiện ngắt kết nối sạch khỏi GATT server...', 'system');
     state.bleDevice.gatt.disconnect();
   } else {
     onBleDisconnected();
@@ -373,7 +373,7 @@ function disconnectBle() {
 }
 
 function onBleDisconnected() {
-  logToBleConsole('Device disconnected from app. Interface offline.', 'error');
+  logToBleConsole('Thiết bị đã ngắt kết nối khỏi ứng dụng. Giao diện ngoại tuyến.', 'error');
   state.bleDevice = null;
   state.bleCharacteristic = null;
   updateBleConnectionUI('disconnected');
@@ -421,7 +421,7 @@ function populateTelemetryForm(data) {
     else if (val.includes('reg') || val.includes('smok')) select.value = 'Regularly Smokes';
   }
 
-  showToast('Patient health forms updated via BLE!', 'info');
+  showToast('Mẫu dữ liệu sức khỏe bệnh nhân đã được cập nhật qua BLE!', 'info');
 }
 
 // -------------------------------------------------------------
@@ -432,14 +432,14 @@ function simulateBleSync() {
   logToBleConsole('Scanning for local ESP32 broadcasters...', 'system');
   
   setTimeout(() => {
-    logToBleConsole('Found broadcast signal: "ESP32-Stroke-Monitor" [MAC: AA:BB:CC:00:11:22]', 'system');
-    logToBleConsole('Connecting to device Gatt Server...', 'system');
+    logToBleConsole('Đã tìm thấy tín hiệu phát sóng: "ESP32-Stroke-Monitor" [MAC: AA:BB:CC:00:11:22]', 'system');
+    logToBleConsole('Đang kết nối tới Gatt Server của thiết bị...', 'system');
     
     setTimeout(() => {
       updateBleConnectionUI('connected');
-      logToBleConsole('GATT Connection: OK', 'success');
-      logToBleConsole('Discovering Primary Telemetry Service: OK', 'success');
-      logToBleConsole('Active notification stream: ENGAGED', 'success');
+      logToBleConsole('Kết nối GATT: OK', 'success');
+      logToBleConsole('Đang khám phá Dịch vụ Telemetry chính: OK', 'success');
+      logToBleConsole('Luồng thông báo đang hoạt động: ĐÃ KÍCH HOẠT', 'success');
       
       // Send mock packet 1
       setTimeout(() => {
@@ -472,7 +472,7 @@ function initFormSubmit() {
 
 async function executeStrokeAnalysis() {
   // Grab form inputs
-  const pName = document.getElementById('patient-name').value.trim() || 'Anonymous Patient';
+  const pName = document.getElementById('patient-name').value.trim() || 'Bệnh nhân ẩn danh';
   const pAge = document.getElementById('patient-age').value;
   const pGender = document.getElementById('patient-gender').value;
   const pHeart = document.getElementById('patient-heartrate').value;
@@ -537,8 +537,8 @@ Keep the findings concise and easy to read.`;
     });
 
   } catch (error) {
-    console.error('Gemini Analysis Failed:', error);
-    showToast(`Gemini error: ${error.message}`, 'error');
+    console.error('Phân tích Gemini thất bại:', error);
+    showToast(`Lỗi Gemini: ${error.message}`, 'error');
   } finally {
     // Hide spinner
     document.getElementById('analyzer-spinner').style.display = 'none';
@@ -686,7 +686,7 @@ function renderHistoryTable() {
   if (state.evalHistory.length === 0) {
     tbody.innerHTML = `
       <tr class="empty-row">
-        <td colspan="6">No patient evaluations recorded yet. Run a Stroke Analyzer sync to start.</td>
+        <td colspan="6">Chưa có đánh giá bệnh nhân nào được ghi nhận. Chạy đồng bộ Phân tích đột quỵ để bắt đầu.</td>
       </tr>`;
     return;
   }
@@ -767,7 +767,7 @@ async function handleUserMessage(messageText) {
   if (state.activeChatHistory.length > 10) state.activeChatHistory.shift();
 
   // 2. Add loader bubble
-  const loaderId = addChatBubble('Analyzing request...', 'assistant loading-pulse');
+  const loaderId = addChatBubble('Đang phân tích yêu cầu...', 'assistant loading-pulse');
 
   try {
     // 3. Request AI response
@@ -787,7 +787,7 @@ async function handleUserMessage(messageText) {
   } catch (error) {
     document.getElementById(loaderId).className = 'message assistant';
     document.getElementById(loaderId).querySelector('.message-bubble').innerHTML = 
-      `<p style="color:var(--risk-high)"><strong>Error calling Gemini API:</strong> ${error.message}</p>`;
+      `<p style="color:var(--risk-high)"><strong>Lỗi khi gọi Gemini API:</strong> ${error.message}</p>`;
   }
 }
 
@@ -863,10 +863,10 @@ function initSettingsActions() {
     toggleBtn.addEventListener('click', () => {
       if (apiInput.type === 'password') {
         apiInput.type = 'text';
-        toggleBtn.innerText = 'Hide';
+        toggleBtn.innerText = 'Ẩn';
       } else {
         apiInput.type = 'password';
-        toggleBtn.innerText = 'Show';
+        toggleBtn.innerText = 'Hiện';
       }
     });
   }
@@ -889,12 +889,12 @@ function initSettingsActions() {
   const clearHistoryBtn = document.getElementById('btn-clear-history');
   if (clearHistoryBtn) {
     clearHistoryBtn.addEventListener('click', () => {
-      if (confirm('Clear all patient logs in the local table?')) {
+      if (confirm('Xóa tất cả nhật ký bệnh nhân trong bảng cục bộ?')) {
         state.evalHistory = [];
         localStorage.setItem('cg_eval_history', JSON.stringify([]));
         renderHistoryTable();
         updateDashboardStats();
-        showToast('Evaluation history cleared.', 'info');
+        showToast('Lịch sử đánh giá đã được xóa.', 'info');
       }
     });
   }
