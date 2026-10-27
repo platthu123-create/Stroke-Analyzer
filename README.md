@@ -79,7 +79,7 @@ void calibrateMPU() {
   Serial.println("================================");
   Serial.println("       MPU6050 CALIBRATION");
   Serial.println("================================");
-  Serial.println("GIU CAM BIEN NAM YEN TREN BAN TRONG 3 GIAY.");
+  Serial.println("KEEP THE SENSOR STILL ON THE TABLE FOR 3 SECONDS.");
   delay(1000);
 
   float sumAx = 0, sumAy = 0, sumAz = 0;
@@ -112,7 +112,7 @@ void calibrateMPU() {
   gyroOffsetY = sumGy / samples;
   gyroOffsetZ = sumGz / samples;
 
-  Serial.println("Calibration MPU6050 hoàn tất!");
+  Serial.println("Calibration MPU6050 Completed!");
 }
 
 // =====================================================
@@ -138,7 +138,7 @@ void setup() {
     Serial.print(".");
     wifiCounter++;
     if (wifiCounter > 40) {
-      Serial.println("\nWiFi Timeout! Tiếp tục chạy offline...");
+      Serial.println("\nWiFi Timeout! Continue running offline...");
       break;
     }
   }
@@ -213,7 +213,7 @@ void loop() {
   Serial.println(irValue);
 
   if (irValue < 50000) {
-    Serial.println("MAX30102: NO FINGER DETECTED. Dat ngon tay len cam bien.");
+    Serial.println("MAX30102: NO FINGER DETECTED. Put your finger on the sensor.");
     delay(1000);
     return;
   }
@@ -266,7 +266,7 @@ void loop() {
     
     http.end();
   } else {
-    Serial.println("WiFi Disconnected. Không thể gửi dữ liệu.");
+    Serial.println("WiFi Disconnected. Can not send the data.");
   }
 
   delay(2000); 
