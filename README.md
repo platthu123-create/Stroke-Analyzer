@@ -28,93 +28,248 @@ Designed with a clean, medical-themed clinical aesthetic (Teal & Mint), it runs 
 To send data to the application from your ESP32, upload this C++ code using the Arduino IDE. It initializes a BLE server advertising as `ESP32-Stroke-Monitor` and broadcasts patient vitals in a JSON structure.
 
 ```cpp
-#include <BLEDevice.h>
-#include <BLEServer.h>
-#include <BLEUtils.h>
-#include <BLE2902.h>
+#include <Wire.h>
+#include <WiFi.h>
+#include <HTTPClient.h>
 
-BLEServer* pServer = NULL;
-BLECharacteristic* pCharacteristic = NULL;
-bool deviceConnected = false;
+#include "MAX30105.h"
+#include "spo2_algorithm.h"
 
-// Standard Heart Rate service and measurement characteristics
-#define SERVICE_UUID        "0000180d"
-#define CHARACTERISTIC_UUID "00002a37"
+#include <Adafruit_MPU6050.h>
+#include <Adafruit_Sensor.h>
+#include <math.h>
 
-class MyServerCallbacks: public BLEServerCallbacks {
-    void onConnect(BLEServer* pServer) {
-      deviceConnected = true;
-    };
-    void onDisconnect(BLEServer* pServer) {
-      deviceConnected = false;
-      // Restart advertising so it can reconnect
-      pServer->getAdvertising()->start();
-    }
-};
+const char* ssid = "YourWifiName";
+const char* password = "YourWifiPassword";
+const char* serverUrl = "your-server-address";
+
+MAX30105 particleSensor;
+Adafruit_MPU6050 mpu;
+
+#define I2C_SDA 8
+#define I2C_SCL 9
+
+#define BUFFER_SIZE 100
+
+uint32_t irBuffer[BUFFER_SIZE];
+uint32_t redBuffer[BUFFER_SIZE];
+
+int32_t spo2 = 0;
+int8_t validSPO2 = 0;
+
+int32_t heartRate = 0;
+int8_t validHeartRate = 0;
+
+#define CALIBRATION_TIME 3000
+
+float accOffsetX = 0;
+float accOffsetY = 0;
+float accOffsetZ = 0;
+
+float gyroOffsetX = 0;
+float gyroOffsetY = 0;
+float gyroOffsetZ = 0;
+
+float magnitude(float x, float y, float z) {
+  return sqrt(x * x + y * y + z * z);
+}
+
+void calibrateMPU() {
+  Serial.println();
+  Serial.println("================================");
+  Serial.println("       MPU6050 CALIBRATION");
+  Serial.println("================================");
+  Serial.println("GIU CAM BIEN NAM YEN TREN BAN TRONG 3 GIAY.");
+  delay(1000);
+
+  float sumAx = 0, sumAy = 0, sumAz = 0;
+  float sumGx = 0, sumGy = 0, sumGz = 0;
+  int samples = 0;
+
+  unsigned long startTime = millis();
+
+  while (millis() - startTime < CALIBRATION_TIME) {
+    sensors_event_t a, g, temp;
+    mpu.getEvent(&a, &g, &temp);
+
+    sumAx += a.acceleration.x;
+    sumAy += a.acceleration.y;
+    sumAz += a.acceleration.z;
+
+    sumGx += g.gyro.x;
+    sumGy += g.gyro.y;
+    sumGz += g.gyro.z;
+
+    samples++;
+    delay(5);
+  }
+
+  accOffsetX = sumAx / samples;
+  accOffsetY = sumAy / samples;
+  accOffsetZ = (sumAz / samples) - 9.80665;
+
+  gyroOffsetX = sumGx / samples;
+  gyroOffsetY = sumGy / samples;
+  gyroOffsetZ = sumGz / samples;
+
+  Serial.println("Calibration MPU6050 hoàn tất!");
+}
+
+// =====================================================
+// SETUP
+// =====================================================
 
 void setup() {
   Serial.begin(115200);
+  delay(1500);
 
-  // Initialize BLE Device
-  BLEDevice::init("ESP32-Stroke-Monitor");
+  Serial.println();
+  Serial.println("==============================================");
+  Serial.println("       ESP32-S3-ZERO SENSOR SYSTEM");
+  Serial.println("==============================================");
 
-  // Create BLE GATT Server
-  pServer = BLEDevice::createServer();
-  pServer->setCallbacks(new MyServerCallbacks());
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to WiFi: ");
+  Serial.println(ssid);
 
-  // Create Primary Service
-  BLEService *pService = pServer->createService(SERVICE_UUID);
+  int wifiCounter = 0;
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+    wifiCounter++;
+    if (wifiCounter > 40) {
+      Serial.println("\nWiFi Timeout! Tiếp tục chạy offline...");
+      break;
+    }
+  }
 
-  // Create Characteristic
-  pCharacteristic = pService->createCharacteristic(
-                      CHARACTERISTIC_UUID,
-                      BLECharacteristic::PROPERTY_READ   |
-                      BLECharacteristic::PROPERTY_NOTIFY |
-                      BLECharacteristic::PROPERTY_INDICATE
-                    );
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("\nWiFi connected!");
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+  }
 
-  // Add descriptor for notifications
-  pCharacteristic->addDescriptor(new BLE2902());
+  Wire.begin(I2C_SDA, I2C_SCL);
 
-  // Start service
-  pService->start();
+  Serial.println("Initializing MAX30102...");
+  if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) {
+    Serial.println("ERROR: MAX30102 NOT FOUND!");
+    while (1) { delay(1000); }
+  }
+  Serial.println("MAX30102 detected!");
 
-  // Start advertising
-  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
-  pAdvertising->addServiceUUID(SERVICE_UUID);
-  pAdvertising->setScanResponse(true);
-  pAdvertising->setMinPreferred(0x06);  // helper for iOS connection
-  pAdvertising->setMinPreferred(0x12);
-  pServer->getAdvertising()->start();
-  
-  Serial.println("ESP32 BLE Telemetry Server Active. Advertising...");
+  byte ledBrightness = 40;
+  byte sampleAverage = 4;
+  byte ledMode = 2;
+  byte sampleRate = 100;
+  int pulseWidth = 411;
+  int adcRange = 4096;
+
+  particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange);
+  particleSensor.setPulseAmplitudeGreen(0);
+
+  Serial.println("Initializing MPU6050...");
+  if (!mpu.begin(0x68, &Wire)) {
+    Serial.println("ERROR: MPU6050 NOT FOUND!");
+    while (1) { delay(1000); }
+  }
+  Serial.println("MPU6050 detected!");
+
+  mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
+  mpu.setGyroRange(MPU6050_RANGE_500_DEG);
+  mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
+  delay(500);
+
+  calibrateMPU();
+
+  Serial.println("==============================================");
+  Serial.println("        SYSTEM READY & RUNNING!");
+  Serial.println("==============================================");
 }
 
-void loop() {
-    if (deviceConnected) {
-        // 1. Read your physical medical sensors here
-        int currentBPM = random(65, 95);     // Replace with physical sensor values
-        
-        // 2. Format vital readings as a clean JSON payload
-        String jsonPayload = "{";
-        jsonPayload += "\"age\":72,";
-        jsonPayload += "\"heartRate\":" + String(currentBPM) + ",";
-        jsonPayload += "\"spo2\":97.4,";
-        jsonPayload += "\"wholeBodyAcceleration\":1.04,";
-        // 1 = Has hypertension history, 0 = No history
-        jsonPayload += "\"hypertension\":" + String(random(0, 2)) + ","; 
-        jsonPayload += "\"smokingStatus\":\"formerly\"";
-        jsonPayload += "}";
+// =====================================================
+// LOOP
+// =====================================================
 
-        // 3. Send payload over the air to Stroke Risk Analyzer
-        pCharacteristic->setValue(jsonPayload.c_str());
-        pCharacteristic->notify();
-        
-        Serial.print("Broadcasted telemetry: ");
-        Serial.println(jsonPayload);
-        
-        delay(3000); // Send data updates every 3 seconds
+void loop() {
+  Serial.println("\n==============================================");
+  Serial.println("       COLLECTING SENSOR DATA...");
+  Serial.println("==============================================");
+
+  for (int i = 0; i < BUFFER_SIZE; i++) {
+    while (particleSensor.available() == false) {
+      particleSensor.check();
     }
+
+    redBuffer[i] = particleSensor.getRed();
+    irBuffer[i] = particleSensor.getIR();
+    particleSensor.nextSample();
+
+    delay(5);
+  }
+
+  uint32_t irValue = irBuffer[BUFFER_SIZE - 1];
+  Serial.print("IR = ");
+  Serial.println(irValue);
+
+  if (irValue < 50000) {
+    Serial.println("MAX30102: NO FINGER DETECTED. Dat ngon tay len cam bien.");
+    delay(1000);
+    return;
+  }
+
+  maxim_heart_rate_and_oxygen_saturation(
+    irBuffer, BUFFER_SIZE, redBuffer,
+    &spo2, &validSPO2, &heartRate, &validHeartRate
+  );
+
+  sensors_event_t a, g, temp;
+  mpu.getEvent(&a, &g, &temp);
+
+  float ax = a.acceleration.x - accOffsetX;
+  float ay = a.acceleration.y - accOffsetY;
+  float az = a.acceleration.z - accOffsetZ;
+  float totalAcc = magnitude(ax, ay, az);
+
+  Serial.println("----------------------------------------------");
+  if (validHeartRate && heartRate > 30 && heartRate < 220) {
+    Serial.print("Heart Rate : "); Serial.print(heartRate); Serial.println(" BPM");
+  } else {
+    Serial.println("Heart Rate : Invalid");
+  }
+
+  if (validSPO2 && spo2 >= 70 && spo2 <= 100) {
+    Serial.print("SpO2       : "); Serial.print(spo2); Serial.println(" %");
+  } else {
+    Serial.println("SpO2       : Invalid");
+  }
+
+  Serial.print("Acceleration: "); Serial.print(totalAcc, 2); Serial.println(" m/s^2");
+  Serial.println("----------------------------------------------");
+
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(serverUrl);
+    http.addHeader("Content-Type", "application/json");
+
+    String hrVal = (validHeartRate && heartRate > 30 && heartRate < 220) ? String(heartRate) : "0";
+    String spo2Val = (validSPO2 && spo2 >= 70 && spo2 <= 100) ? String(spo2) : "0";
+
+    String httpRequestData = "{\"heartRate\": " + hrVal + 
+                             ", \"spo2\": " + spo2Val + 
+                             ", \"acceleration\": " + String(totalAcc, 2) + "}";
+
+    int httpResponseCode = http.POST(httpRequestData);
+    
+    Serial.print("HTTP Response code: ");
+    Serial.println(httpResponseCode);
+    
+    http.end();
+  } else {
+    Serial.println("WiFi Disconnected. Không thể gửi dữ liệu.");
+  }
+
+  delay(2000); 
 }
 ```
 
