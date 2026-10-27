@@ -24,7 +24,7 @@ Designed with a clean, medical-themed clinical aesthetic (Teal & Mint), it runs 
 
 *Note: The Web Bluetooth API requires either a local host connection (`localhost`) or an HTTPS connection to function due to browser security guidelines. The backend must run alongside the frontend for AI features.*
 
-## 3. Programming your ESP32 (C++ Bluetooth BLE Server)
+## 3. Programming your ESP32 (C++ Bluetooth BLE Server via Arduino IDE)
 To send data to the application from your ESP32, upload this C++ code using the Arduino IDE. It initializes a BLE server advertising as `ESP32-Stroke-Monitor` and broadcasts patient vitals in a JSON structure.
 
 ```cpp
